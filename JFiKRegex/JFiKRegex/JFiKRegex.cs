@@ -19,7 +19,8 @@ namespace JFiKRegex
 
         private void go_Click(object sender, EventArgs e)
         {
-            regexRichTextBox.Text = textRichTextBox.Text.Substring(52,5);
+            DFS dfs = new DFS(textRichTextBox.Text);
+            regexRichTextBox.Text = dfs.analyse();
         }
 
         private void clear_Click(object sender, EventArgs e)
