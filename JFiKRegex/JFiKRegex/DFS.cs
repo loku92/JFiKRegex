@@ -6,30 +6,142 @@ using System.Threading.Tasks;
 
 namespace JFiKRegex
 {
+    /*TODO : setToken*/
     public class DFS
     {
-        public static STATE[] start = { STATE.A };
-        public static STATE [] accepted = {STATE.T,STATE.AK};
-        public static string[] eq = { "<KWOTA>", "<DATA>" };
+        public static int start = (int)STATE.A;
+        public static int [] accepted = {(int)STATE.T,(int)STATE.AK};
+        public static string[] eq = { "<<KWOTA>>", "<<DATA>>" };
+        public static Dictionary<char, int> Tokens = new Dictionary<char, int>()
+	    {
+	        {'0', 0},
+            {'1', 0},
+            {'2', 0},
+            {'3', 0},
+            {'4', 0},
+            {'5', 0},
+            {'6', 0},
+            {'7', 0},
+            {'8', 0},
+            {'9', 0},
+	        {',', 1},
+	        {' ', 2},
+	        {'/', 3},
+            {'-', 4},
+	        {'t', 5},
+	        {'y', 6},
+	        {'s', 7},
+	        {'z', 8},
+	        {'ł', 9},
+	    };
+
+        public static int[,] V = new int[,]
+        {
+            /* \d , sp  / -  t  y   s  z  ł*/
+	    /*A*/ {1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+	    /*B*/ {2,3,4,-1,-1,-1,-1,-1,-1,-1},
+        /*C*/ {5,3,4,6,-1,-1,-1,-1,-1,-1},
+        /*D*/ {7,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        /*E*/ {-1,-1,-1,-1,-1,8,-1,-1,9,-1},
+        /*F*/ {10,3,4,-1,-1,-1,-1,-1,-1,-1},
+        /*G*/ {11,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        /*J*/ {12,-1,4,-1,-1,-1,-1,-1,-1,-1},
+        /*K*/ {-1,-1,-1,-1,-1,-1,13,-1,-1,-1},
+        /*L*/ {-1,-1,-1,-1,-1,-1,-1,-1,-1,14},
+        /*M*/ {15,3,4,-1,16,-1,-1,-1,-1,-1},
+        /*P*/ {17,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        /*Q*/ {12,-1,4,-1,-1,-1,-1,-1,-1,-1},
+        /*S*/ {-1,-1,-1,-1,-1,-1,-1,14,-1,-1},
+        /*T */ {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        /*U*/ {15,3,4,-1,-1,-1,-1,-1,-1,-1},
+        /*X*/ {18,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        /*Y*/ {-1,-1,-1,19,-1,-1,-1,-1,-1,-1},
+        /*AD*/ {20,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        /*AE*/ {21,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        /*AF*/ {-1,-1,-1,-1,22,-1,-1,-1,-1,-1},
+        /*AG*/ {22,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        /*AH*/ {23,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        /*AJ*/ {24,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        /*AK */ {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
+	    };
+
         public string txt;
+        private int currentState;
+        private int currentToken;
 
         public DFS(string txt)
         {
             this.txt = txt;
+            currentState = (int)STATE.A;
         }
 
-        public bool isAcceptable(STATE s){
-            return accepted.Contains(s);
+        private bool isAcceptable(){
+            return accepted.Contains(currentState);
         }
 
-        public string getEquivalent(STATE s)
+        private string getEquivalent()
         {
-            return eq[Array.IndexOf(accepted, s)];
+            return eq[Array.IndexOf(accepted, currentState)];
+        }
+
+        private bool makeMove()
+        {
+            currentState = V[currentState, currentToken];
+            if(currentState < 0)
+                return false;
+            return true;
         }
 
         public string analyse()
         {
-            return txt;
+            char c;
+            string newtxt = "";
+            string tmp = "";
+            for (int i = 0; i < txt.Length; i++)
+            {
+                c = txt[i];
+                tmp += c;
+                currentToken = setToken(c);
+                if (currentToken < 0)
+                {
+                    currentState = start;
+                    newtxt += tmp;
+                    tmp = "";
+                }
+                else
+                {
+                    makeMove();
+                    if (isAcceptable())
+                    {
+                        newtxt += getEquivalent();
+                        currentState = start;
+                        tmp = "";
+                    }
+                    else if (currentState < 0)
+                    {
+                        currentState = start;
+                        newtxt += tmp;
+                        tmp = "";
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+            }
+
+            currentState = start;
+            return newtxt;
+        }
+
+        private int setToken(char c)
+        {
+            if (Tokens.ContainsKey(c))
+            {
+                return Tokens[c];
+            }
+            return -1;
         }
         
     }
@@ -60,21 +172,8 @@ namespace JFiKRegex
         AG = 21,
         AH = 22,
         AJ = 23,
-        AK = 24
+        AK = 24,
+        Failed = -1
     };
 
-    public enum TOKENS
-    {
-        D = 0,
-        COMMA = 1,
-        SPACE = 2,
-        BSLASH = 3,
-        DASH = 4,
-        T = 5,
-        Y = 6,
-        S = 7,
-        Z = 8,
-        L = 9,
-        OTHER = 100
-    };
 }
