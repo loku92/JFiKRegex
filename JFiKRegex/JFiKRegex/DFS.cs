@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace JFiKRegex
-{
-    /*TODO : setToken*/
+{    
     public class DFS
     {
         public static int start = (int)STATE.A;
@@ -65,7 +64,7 @@ namespace JFiKRegex
         /*AK */ {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
 	    };
 
-        public string txt;
+        private string txt;
         private int currentState;
         private int currentToken;
 
