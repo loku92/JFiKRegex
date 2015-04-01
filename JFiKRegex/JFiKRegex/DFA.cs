@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JFiKRegex
 {    
-    public class DFS
+    public class DFA
     {
         public static int start = (int)STATE.A;
         public static int [] accepted = {(int)STATE.T,(int)STATE.AK};
@@ -34,7 +34,7 @@ namespace JFiKRegex
 	        {'ł', 9},
 	    };
 
-        public static int[,] V = new int[,]
+        public static int[,] transitionTable = new int[,]
         {
             /* \d , sp  / -  t  y   s  z  ł*/
 	    /*A*/ {1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
@@ -51,7 +51,7 @@ namespace JFiKRegex
         /*P*/ {17,-1,-1,-1,-1,-1,-1,-1,-1,-1},
         /*Q*/ {12,-1,4,-1,-1,-1,-1,-1,-1,-1},
         /*S*/ {-1,-1,-1,-1,-1,-1,-1,14,-1,-1},
-        /*T */ {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        /*T*/ {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
         /*U*/ {15,3,4,-1,-1,-1,-1,-1,-1,-1},
         /*X*/ {18,-1,-1,-1,-1,-1,-1,-1,-1,-1},
         /*Y*/ {-1,-1,-1,19,-1,-1,-1,-1,-1,-1},
@@ -61,14 +61,14 @@ namespace JFiKRegex
         /*AG*/ {22,-1,-1,-1,-1,-1,-1,-1,-1,-1},
         /*AH*/ {23,-1,-1,-1,-1,-1,-1,-1,-1,-1},
         /*AJ*/ {24,-1,-1,-1,-1,-1,-1,-1,-1,-1},
-        /*AK */ {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
+        /*AK*/ {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
 	    };
 
         private string txt;
         private int currentState;
         private int currentToken;
 
-        public DFS(string txt)
+        public DFA(string txt)
         {
             this.txt = txt;
             currentState = (int)STATE.A;
@@ -85,7 +85,7 @@ namespace JFiKRegex
 
         private bool makeMove()
         {
-            currentState = V[currentState, currentToken];
+            currentState = transitionTable[currentState, currentToken];
             if(currentState < 0)
                 return false;
             return true;

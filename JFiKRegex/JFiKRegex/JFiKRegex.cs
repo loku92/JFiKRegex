@@ -19,7 +19,7 @@ namespace JFiKRegex
 
         private void go_Click(object sender, EventArgs e)
         {
-            DFS dfs = new DFS(textRichTextBox.Text);
+            DFA dfs = new DFA(textRichTextBox.Text);
             regexRichTextBox.Text = dfs.analyse();
         }
 
